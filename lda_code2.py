@@ -22,8 +22,8 @@ class LDA():
 	LAG = 1
 	INITIAL_ALPHA = 0.1
 	NTOPICS = 10
-	EM_CONVERGED = 1e-7
-	EM_MAX_ITER = 20
+	EM_CONVERGED = 1e-13
+	EM_MAX_ITER = 30
 	VAR_CONVERGED = 1e-9
 	VAR_MAX_ITER = 30
 	NUM_INIT = 1
@@ -47,7 +47,7 @@ class LDA():
 				likelihood = gammaln(self.alpha * self.number_topics)\
 							- self.number_topics * gammaln(self.alpha)\
 							- gammaln(var_gamma_sum)
-				likelihood += np.sum((self.alpha - var_gamma + np.sum(phi, axis = 0)) \
+				likelihood += np.sum((self.alpha - var_gamma + np.sum((doc.counts * phi.T).T, axis = 0)) \
 									*(var_dig_gamma - digamma(var_gamma_sum)) \
 									+ gammaln(var_gamma) \
 									+ np.sum((doc.counts * phi.T).T * (log_beta_NxK - np.log(phi)), axis = 0))
@@ -166,14 +166,11 @@ class LDA():
 
 			#m step
 			lda_mle(sum_prob_z_when_w_in_copurs)
-			if i >1:
-				print("old_likelihood = {}".format(old_likelihood))
-				print("likelihood = {}".format(likelihood))
+			if i >0:
 				converged = (old_likelihood - likelihood)/old_likelihood			
 			old_likelihood = likelihood
 			if i% self.LAG == 0:
-				print("converged = {}, likelihood = {}".format(converged, likelihood))
-			print("Time = {}".format(time.time() - start))
+				print("Lap lan {}, converged = {}, likelihood = {}, Time = {}".format(i,converged, likelihood,time.time() - start))
 			i += 1
 		
 def readVocab(file_name):
