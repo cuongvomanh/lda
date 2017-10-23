@@ -20,9 +20,9 @@ class Corpus():
 		self.number_docs = len(docs)
 class LDA():
 	LAG = 1
-	INITIAL_ALPHA = 0.1
+	INITIAL_ALPHA = 0.01
 	NTOPICS = 10
-	EM_CONVERGED = 1e-13
+	EM_CONVERGED = 1e-6
 	EM_MAX_ITER = 30
 	VAR_CONVERGED = 1e-9
 	VAR_MAX_ITER = 30
@@ -54,7 +54,7 @@ class LDA():
 				return likelihood 
 			# Init var_gamma
 			var_gamma = np.empty(self.number_topics, dtype="float64")
-			var_gamma.fill(self.INITIAL_ALPHA + doc.word_total_number)
+			var_gamma.fill(self.INITIAL_ALPHA + doc.word_total_number/self.number_topics)
 			var_dig_gamma = digamma(var_gamma)
 			# Caculate log_beta for doc
 			log_beta_NxK = np.zeros(doc.length*self.number_topics, dtype = "float64")\
